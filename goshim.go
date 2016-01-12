@@ -29,6 +29,7 @@ Better `+"`go run`"+`. Build go codes transparently and exec
 
 var helpReg = regexp.MustCompile(`^--?h(?:elp)?$`)
 
+// Run the goshim
 func Run(args []string) int {
 	if len(args) < 1 || (len(args) == 1 && helpReg.MatchString(args[0])) {
 		printUsage()
