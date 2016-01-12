@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"syscall"
 
@@ -14,8 +15,23 @@ import (
 	"github.com/mitchellh/go-homedir"
 )
 
+const version = "0.0.1"
+
+func printUsage() {
+	fmt.Fprintf(os.Stderr, `Usage:
+  goshim ./path/to/pkg [args...]
+
+Verion: %s
+
+Better `+"`go run`"+`. Build go codes transparently and exec
+`, version)
+}
+
+var helpReg = regexp.MustCompile(`^--?h(?:elp)?$`)
+
 func Run(args []string) int {
-	if len(args) < 1 {
+	if len(args) < 1 || (len(args) == 1 && helpReg.MatchString(args[0])) {
+		printUsage()
 		return 1
 	}
 	subcmdOrSrcdir := args[0]
