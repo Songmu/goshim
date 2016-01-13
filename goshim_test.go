@@ -31,13 +31,13 @@ func TestSrcList(t *testing.T) {
 	dir = "testdata/non-existence"
 	_, err := srcList(dir)
 	if err == nil || !strings.HasPrefix(err.Error(), "can't load package: package ./testdata/non-existence: open") {
-		t.Errorf("something went wrong")
+		t.Errorf("something went wrong: %v", err)
 	}
 
 	dir = "testdata/notgo"
 	_, err = srcList(dir)
 	if err == nil || !strings.HasPrefix(err.Error(), "can't load package: package ./testdata/notgo: no buildable Go source files in") {
-		t.Errorf("something went wrong")
+		t.Errorf("something went wrong %v:", err)
 	}
 }
 
@@ -45,6 +45,6 @@ func TestRun(t *testing.T) {
 	dir := "testdata/testproj"
 	ret := Run([]string{dir})
 	if ret != 0 {
-		t.Errorf("something went wrong")
+		t.Errorf("something went wrong: %v", ret)
 	}
 }
