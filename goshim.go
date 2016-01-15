@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strings"
 	"syscall"
 
@@ -27,7 +28,10 @@ Better `+"`go run`"+`. Build go codes transparently and exec
 `, version)
 }
 
-var helpReg = regexp.MustCompile(`^--?h(?:elp)?$`)
+var (
+	helpReg  = regexp.MustCompile(`^--?h(?:elp)?$`)
+	execFunc = syscall.Exec
+)
 
 // Run the goshim
 func Run(args []string) int {
@@ -57,7 +61,7 @@ func Run(args []string) int {
 			return 1
 		}
 	}
-	err = syscall.Exec(dst, append([]string{dst}, args[1:]...), os.Environ())
+	err = execFunc(dst, append([]string{dst}, args[1:]...), os.Environ())
 	return wrapcommander.ResolveExitCode(err)
 }
 
@@ -92,6 +96,9 @@ func binDst(dir string) string {
 	dir, err := filepath.Abs(dir)
 	if err != nil {
 		log.Panic(err)
+	}
+	if runtime.GOOS == "windows" {
+		dir = strings.Replace(dir, ":", "", -1) + ".exe"
 	}
 	return filepath.Join(cacheDir, dir)
 }
